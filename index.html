@@ -2,207 +2,35 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Утраченные гении</title>
-    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Плеер</title>
     <style>
-        :root {
-            --bg: #0f0c09; --bg2: #1a1510; --text: #e8dfc8;
-            --text3: #7a6a50; --accent: #d4733a; --gold: #d4a853; --border: #3a3020;
-        }
-        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            font-family: 'EB Garamond', serif; background: var(--bg); color: var(--text); 
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden; 
-        }
-        
-        /* Шапка с кнопкой меню для мобильных */
-        .header { 
-            padding: 15px 20px; border-bottom: 1px solid var(--border); 
-            display: flex; justify-content: space-between; align-items: center; z-index: 100;
-        }
-        .header-title { font-family: 'Playfair Display', serif; font-size: 1.2em; }
-        .menu-btn { background: none; border: 1px solid var(--border); color: var(--gold); padding: 5px 10px; font-family: 'Cinzel'; font-size: 0.7em; border-radius: 4px; }
-
-        .layout { display: flex; flex: 1; overflow: hidden; position: relative; }
-        
-        /* Выезжающий плейлист */
-        .playlist { 
-            position: absolute; left: -100%; top: 0; width: 85%; height: 100%; 
-            background: var(--bg2); z-index: 90; transition: 0.3s; border-right: 1px solid var(--border);
-            overflow-y: auto;
-        }
-        .playlist.open { left: 0; }
-        .pl-item { padding: 20px; border-bottom: 1px solid var(--border); color: var(--text2); font-size: 1.1em; }
-        .pl-item.active { background: var(--bg); border-left: 4px solid var(--gold); color: var(--gold); }
-
-        .player-main { flex: 1; display: flex; flex-direction: column; width: 100%; }
-        
-        .text-viewer { 
-            flex: 1; overflow-y: auto; padding: 20px; font-size: 1.2em; line-height: 1.6;
-            scroll-behavior: smooth;
-        }
-        .sentence { transition: 0.2s; border-radius: 4px; }
-        .active-sentence { background: rgba(212,168,83,0.2); color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-
-        /* Панель управления снизу */
-        .bottom-controls { 
-            background: var(--bg2); border-top: 1px solid var(--border); padding: 15px 20px 30px; 
-        }
-        .progress-wrap { height: 4px; background: var(--border); margin-bottom: 15px; position: relative; }
-        .progress-fill { height: 100%; background: var(--gold); width: 0%; }
-        
-        .btns { display: flex; justify-content: space-around; align-items: center; }
-        .btn-play { 
-            width: 65px; height: 65px; border-radius: 50%; background: var(--accent); 
-            border: none; color: white; font-size: 1.5em; display: flex; align-items: center; justify-content: center;
-        }
-        
-        .settings-row { display: flex; justify-content: space-between; margin-top: 15px; font-size: 0.8em; font-family: 'Cinzel'; color: var(--text3); }
-        select { background: #000; color: var(--gold); border: 1px solid var(--border); padding: 5px; border-radius: 4px; width: 60%; }
-
-        /* Подсказка */
-        .toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--gold); color: #000; padding: 10px 20px; border-radius: 20px;
-            font-size: 0.8em; font-weight: bold; display: none; z-index: 1000;
-        }
+        body { background: #0f0c09; color: #e8dfc8; font-family: serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+        .play-btn { background: #d3733a; border: none; border-radius: 50%; width: 90px; height: 90px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(211,115,58,0.5); }
+        svg { fill: white; width: 40px; height: 40px; }
     </style>
 </head>
 <body>
-
-<div id="toast" class="toast">Цитата сохранена</div>
-
-<div class="header">
-    <div class="header-title">Утраченные гении</div>
-    <button class="menu-btn" onclick="toggleMenu()">Главы</button>
-</div>
-
-<div class="layout">
-    <div class="playlist" id="playlist"></div>
-    <div class="player-main">
-        <div class="text-viewer" id="text-display"></div>
-        
-        <div class="bottom-controls">
-            <div class="progress-wrap" onclick="seek(event)">
-                <div class="progress-fill" id="progress-fill"></div>
-            </div>
-            
-            <div class="btns">
-                <button style="background:none; border:none; color:var(--text3); font-size:1.5em;" onclick="prev()">⏮</button>
-                <button class="btn-play" id="btn-play" onclick="togglePlay()">▶</button>
-                <button style="background:none; border:none; color:var(--text3); font-size:1.5em;" onclick="next()">⏭</button>
-            </div>
-
-            <div class="settings-row">
-                <select id="voice-select"></select>
-                <div onclick="changeSpeed()" id="speed-btn">1.0x СКОРОСТЬ</div>
-            </div>
-        </div>
+    <div style="padding: 20px;">
+        <h2 id="st">Нажми Play</h2>
+        <p id="tx">Первый ключ был найден в руинах Александрии. Это не был свиток или камень. Это была идея, витающая в воздухе.</p>
     </div>
-</div>
-
-<script>
-const chapters = [
-    { title: "Тени прошлого", text: "История не пишется победителями. Она пишется теми, кто выжил в тишине библиотек. Александр Филипп открывает завесу над тайнами." },
-    { title: "Код забвения", text: "Первый ключ был найден в руинах Александрии. Это не был свиток или камень. Это была идея, витающая в воздухе." },
-    { title: "Шепот вечности", text: "Вы когда-нибудь слышали, как поют старые книги? Их голос — это шелест страниц, напоминающий шум далекого моря." }
-];
-
-let curCh = 0, curSn = 0, isPlaying = false, sentences = [];
-let synth = window.speechSynthesis;
-let speed = 1.0;
-
-function init() {
-    const pl = document.getElementById('playlist');
-    pl.innerHTML = chapters.map((ch, i) => `
-        <div class="pl-item" onclick="loadChapter(${i})">${ch.title}</div>
-    `).join('');
-    
-    loadVoices();
-    if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
-    
-    loadChapter(0, false);
-}
-
-function loadVoices() {
-    const voices = synth.getVoices().filter(v => v.lang.includes('ru'));
-    document.getElementById('voice-select').innerHTML = voices.map((v, i) => `<option value="${i}">${v.name}</option>`).join('');
-}
-
-function loadChapter(i, play = true) {
-    curCh = i; curSn = 0;
-    document.querySelectorAll('.pl-item').forEach((el, idx) => el.classList.toggle('active', idx === i));
-    sentences = chapters[i].text.match(/[^.!?]+[.!?]+/g) || [chapters[i].text];
-    render();
-    toggleMenu(false);
-    if(play) { stop(); start(); }
-}
-
-function render() {
-    const display = document.getElementById('text-display');
-    display.innerHTML = sentences.map((s, i) => `<span class="sentence" id="s-${i}" onclick="jump(${i})">${s} </span>`).join('');
-    updateUI();
-}
-
-function togglePlay() { isPlaying ? stop() : start(); }
-
-function start() {
-    if (curSn >= sentences.length) {
-        if (curCh < chapters.length - 1) return loadChapter(curCh + 1);
-        return stop();
-    }
-    isPlaying = true;
-    document.getElementById('btn-play').innerText = '||';
-    
-    const ut = new SpeechSynthesisUtterance(sentences[curSn]);
-    const vIdx = document.getElementById('voice-select').value;
-    ut.voice = synth.getVoices().filter(v => v.lang.includes('ru'))[vIdx];
-    ut.rate = speed;
-
-    ut.onstart = () => {
-        updateUI();
-        const active = document.getElementById(`s-${curSn}`);
-        active.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    };
-
-    ut.onend = () => {
-        curSn++;
-        if(isPlaying) start();
-    };
-
-    synth.speak(ut);
-}
-
-function stop() {
-    isPlaying = false;
-    synth.cancel();
-    document.getElementById('btn-play').innerText = '▶';
-}
-
-function updateUI() {
-    document.querySelectorAll('.sentence').forEach(el => el.classList.remove('active-sentence'));
-    if(document.getElementById(`s-${curSn}`)) document.getElementById(`s-${curSn}`).classList.add('active-sentence');
-    document.getElementById('progress-fill').style.width = (curSn / sentences.length * 100) + '%';
-}
-
-function toggleMenu(show) {
-    const pl = document.getElementById('playlist');
-    show === undefined ? pl.classList.toggle('open') : (show ? pl.classList.add('open') : pl.classList.remove('open'));
-}
-
-function changeSpeed() {
-    speed = speed >= 2 ? 0.5 : speed + 0.25;
-    document.getElementById('speed-btn').innerText = speed.toFixed(2) + 'x СКОРОСТЬ';
-    if(isPlaying) { stop(); start(); }
-}
-
-function jump(i) { curSn = i; stop(); start(); }
-function next() { loadChapter(Math.min(curCh + 1, chapters.length - 1)); }
-function prev() { loadChapter(Math.max(curCh - 1, 0)); }
-
-init();
-</script>
+    <button class="play-btn" onclick="go()">
+        <svg viewBox="0 0 24 24"><path id="ic" d="M8 5v14l11-7z"/></svg>
+    </button>
+    <script>
+        let s = window.speechSynthesis, isP = false;
+        function go() {
+            let ic = document.getElementById('ic'), st = document.getElementById('st');
+            if (!isP) {
+                s.cancel(); 
+                let u = new SpeechSynthesisUtterance(document.getElementById('tx').innerText);
+                u.lang = 'ru-RU';
+                u.onstart = () => { isP = true; st.innerText = "Читаю..."; ic.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z'); };
+                u.onend = () => { isP = false; st.innerText = "Готово"; ic.setAttribute('d', 'M8 5v14l11-7z'); };
+                s.speak(u);
+            } else { s.cancel(); isP = false; st.innerText = "Стоп"; ic.setAttribute('d', 'M8 5v14l11-7z'); }
+        }
+    </script>
 </body>
 </html>
-
